@@ -5,11 +5,16 @@ using UnityEngine.UI;
 
 public class CDirectionWheel : MonoBehaviour
 {
-    //public Image[] images;
     public static CDirectionWheel instance;
+
     private Image img;
-    private Touch t;
     private Animator anim;
+    private Touch t;
+    private Vector2 initialTouch;
+    private Vector2 touchDelta;
+    private float hipotenuse;
+    private float angle;
+    private float x, y;
 
     void Awake()
     {
@@ -20,27 +25,38 @@ public class CDirectionWheel : MonoBehaviour
     {
         img = GetComponent<Image>();
         anim = GetComponent<Animator>();
+        img.enabled = false;
 	}
 	
 	void Update ()
     {
-		if(Input.touchCount == 1)
+		if(Input.touchCount > 0)
         {
             t = Input.GetTouch(0);
-        }
-        switch (t.phase)
-        {
-            case TouchPhase.Began:
-                Enable(t.position);
-                break;
-            case TouchPhase.Moved:
-                break;
-            case TouchPhase.Ended:
-                img.enabled = false;
-                anim.SetInteger("NivelDeFuerza", 0);
-                break;
-            default:
-                break;
+            switch (t.phase)
+            {
+                case TouchPhase.Began:
+                    initialTouch = t.position;
+                    Enable(t.position);
+                    break;
+                case TouchPhase.Moved:
+                    touchDelta = t.position - initialTouch;
+                    AdjustImage(touchDelta.magnitude);
+                    x = t.position.x - initialTouch.x;
+                    y = t.position.y - initialTouch.y;
+                    hipotenuse = Vector2.Distance(t.position, initialTouch);
+                    x = x / hipotenuse;
+                    y = y / hipotenuse;
+                    angle = Mathf.Atan2(y, x) * Mathf.Rad2Deg;
+                    Rotate(angle);
+                    break;
+                case TouchPhase.Ended:
+                    img.enabled = false;
+                    anim.SetInteger("NivelDeFuerza", 0);
+                    break;
+                default:
+                    break;
+            }
         }
 	}
 
@@ -64,11 +80,11 @@ public class CDirectionWheel : MonoBehaviour
         {
             magnitude = 2;
         }
-        else if(magnitude > 250 && magnitude < 300)
+        else if(magnitude > 200 && magnitude < 250)
         {
             magnitude = 3;
         }
-        else if(magnitude > 300)
+        else if(magnitude > 250)
         {
             magnitude = 4;
         }
@@ -78,6 +94,5 @@ public class CDirectionWheel : MonoBehaviour
     public void Rotate(float angle)
     {
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
-        //transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, Mathf.Atan2(delta.y, delta.x)) * Mathf.Rad2Deg);
     }
 }

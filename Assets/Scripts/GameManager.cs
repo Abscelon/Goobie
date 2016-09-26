@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     public Vector2 initialTouch;
     public Vector2 currentTouch;
     public Vector2 finalTouch;
-    private Vector2 heading;
+    private Vector2 touchDelta;
     private Rigidbody2D bodyPlayer;
     private Rigidbody2D spriteRigidbody;
     private Touch t;
@@ -39,15 +39,15 @@ public class GameManager : MonoBehaviour
         if (Input.touchCount > 0)
         {
             t = Input.GetTouch(0);
-            text.text = angle.ToString();
+            text.text = Input.touchCount.ToString();
             switch(t.phase)
             {
                 case TouchPhase.Began:
                     initialTouch = t.position;
                     break;
                 case TouchPhase.Moved: // TODO - simplify
-                    heading = t.position - initialTouch;
-                    wheel.AdjustImage(heading.magnitude);
+                    touchDelta = t.position - initialTouch;
+                    wheel.AdjustImage(touchDelta.magnitude);
                     x = t.position.x - initialTouch.x;
                     y = t.position.y - initialTouch.y;
                     hip = Vector2.Distance(t.position, initialTouch);
@@ -58,8 +58,8 @@ public class GameManager : MonoBehaviour
                     break;
                 case TouchPhase.Ended: //TODO - limit the player velocity to steps
                     finalTouch = t.position;
-                    heading = finalTouch - initialTouch;
-                    bodyPlayer.velocity = heading;
+                    touchDelta = finalTouch - initialTouch;
+                    bodyPlayer.velocity = touchDelta;
                     break;
                 default:
                     break;
