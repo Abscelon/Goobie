@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class CDirectionWheel : MonoBehaviour
-{
+{ /*  This script controls the GUI Direction Wheel */
     public static CDirectionWheel instance;
 
     private Image img;

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class CGoobieLauncher : MonoBehaviour
 {
     public GameObject goobieSprite;
-
+    public Text text; // for debugging
     private Rigidbody2D rb;
     private Rigidbody2D spriteRb;
     private Touch t;
@@ -30,6 +30,7 @@ public class CGoobieLauncher : MonoBehaviour
     {
         rotationSpeed = Vector2.Distance(initialTouch, currentTouch); // TODO - explain
         spriteRb.angularVelocity = rotationSpeed;
+        text.text = touchDelta.magnitude.ToString();
         if (Input.touchCount > 0)
         {
             t = Input.GetTouch(0);
@@ -40,7 +41,37 @@ public class CGoobieLauncher : MonoBehaviour
                     break;
                 case TouchPhase.Ended:
                     touchDelta = t.position - initialTouch;
-                    rb.velocity = touchDelta;
+                    float newX, newY;
+                    newX = Mathf.Pow(touchDelta.x, 2f) / touchDelta.magnitude;
+                    // set velocity levels
+                    if(touchDelta.magnitude < 100f) // TODO
+                    {
+                        rb.velocity = Vector2.zero;
+                    }
+                    else if(touchDelta.magnitude > 100f && touchDelta.magnitude < 150f)
+                    {
+                        newX = (Mathf.Pow(touchDelta.x, 2f) / touchDelta.magnitude) * 10f;
+                        newY = (Mathf.Pow(touchDelta.y, 2f) / touchDelta.magnitude) * 10f;
+                        rb.velocity = new Vector2(newX, newY);
+                    }
+                    else if (touchDelta.magnitude > 150f && touchDelta.magnitude < 200f)
+                    {
+                        newX = (Mathf.Pow(touchDelta.x, 2f) / touchDelta.magnitude) * 30f;
+                        newY = (Mathf.Pow(touchDelta.y, 2f) / touchDelta.magnitude) * 30f;
+                        rb.velocity = new Vector2(newX, newY);
+                    }
+                    else if (touchDelta.magnitude > 200f && touchDelta.magnitude < 250f)
+                    {
+                        newX = (Mathf.Pow(touchDelta.x, 2f) / touchDelta.magnitude) * 50f;
+                        newY = (Mathf.Pow(touchDelta.y, 2f) / touchDelta.magnitude) * 50f;
+                        rb.velocity = new Vector2(newX, newY);
+                    }
+                    else if (touchDelta.magnitude > 250f)
+                    {
+                        newX = (Mathf.Pow(touchDelta.x, 2f) / touchDelta.magnitude) * 60f;
+                        newY = (Mathf.Pow(touchDelta.y, 2f) / touchDelta.magnitude) * 60f;
+                        rb.velocity = new Vector2(newX, newY);
+                    }
                     break;
                 default:
                     break;
